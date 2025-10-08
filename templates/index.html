@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Home Simulator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>🏠 Smart Home Control Panel</h1>
+
+    <div class="container">
+        <div class="device" id="light">
+            <h2>💡 Light</h2>
+            <button onclick="toggleDevice('light')">Toggle</button>
+            <p>Status: <span id="light-status">{{ 'ON' if devices['light'] else 'OFF' }}</span></p>
+        </div>
+
+        <div class="device" id="fan">
+            <h2>🌀 Fan</h2>
+            <button onclick="toggleDevice('fan')">Toggle</button>
+            <p>Status: <span id="fan-status">{{ 'ON' if devices['fan'] else 'OFF' }}</span></p>
+        </div>
+
+        <div class="device" id="door">
+            <h2>🚪 Door</h2>
+            <button onclick="toggleDevice('door')">Toggle</button>
+            <p>Status: <span id="door-status">{{ 'OPEN' if devices['door'] else 'CLOSED' }}</span></p>
+        </div>
+
+        <div class="device" id="temp">
+            <h2>🌡️ Temperature</h2>
+            <button onclick="updateTemperature()">Refresh</button>
+            <p>Value: <span id="temperature">{{ devices['temperature'] }}°C</span></p>
+        </div>
+    </div>
+
+    <script>
+        async function toggleDevice(device) {
+            const response = await fetch(`/toggle/${device}`, { method: 'POST' });
+            const data = await response.json();
+            document.getElementById(`${device}-status`).innerText = data[device] ? 'ON' : 'OFF';
+        }
+
+        async function updateTemperature() {
+            const response = await fetch('/temperature');
+            const data = await response.json();
+            document.getElementById('temperature').innerText = data.temperature + '°C';
+        }
+    </script>
+</body>
+</html>
+
+
